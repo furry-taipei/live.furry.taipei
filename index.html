@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>頂加影音團隊 Live</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/video.js@7.18.1/dist/video-js.min.css"
+      integrity="sha256-yGcWCuvbIoEEub7ZDTs09zmQzHVKs2B6i6CkbffFXGo="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css"
+      integrity="sha256-WAgYcAck1C1/zEl5sBl5cfyhxtLgKGdpI3oKyJffVRI="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/videojs-hls-quality-selector@1.1.4/dist/videojs-hls-quality-selector.css"
+      integrity="sha256-OU3TJPFQBAIG/0YTWYL5sp4829kTC+5HYeQ7CwdAr48="
+      crossorigin="anonymous"
+    />
+
+    <style>
+      body,
+      html {
+        height: 100%;
+        background-color: #262626;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+      }
+
+      * {
+        font-family: "SF Pro TC", "SF Pro Text", "SF Pro Icons", "PingFang TC",
+          "Helvetica Neue", "Helvetica", "Arial", "Microsoft JhengHei",
+          wf_SegoeUI, "Segoe UI", Segoe, "Segoe WP", Tahoma, Verdana, Ubuntu,
+          "Bitstream Vera Sans", "DejaVu Sans", Tahoma, 微軟正黑體, "LiHei Pro",
+          "WenQuanYi Micro Hei", "Droid Sans Fallback", "AR PL UMing TW", Roboto,
+          "Helvetica Neue", "Hiragino Maru Gothic ProN", メイリオ,
+          "ヒラギノ丸ゴ ProN W4", Meiryo, "Droid Sans", sans-serif;
+      }
+
+      #app {
+        min-width: 60vw;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        color: white;
+      }
+
+      @media screen and (max-width: 767px) {
+        .player-container {
+          width: 90vw;
+        }
+      }
+
+      @media screen and (min-width: 768px) {
+        .player-container {
+          width: 60vw;
+        }
+      }
+
+      .player-container {
+        padding-top: 56.25%;
+        height: 0px;
+        position: relative;
+      }
+      .player {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      #live {
+        -webkit-box-shadow: 0px 0px 5px 2px rgba(255, 0, 0, 0.5);
+        box-shadow: 0px 0px 5px 2px rgba(255, 0, 0, 0.5);
+      }
+
+      .qualities {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+      .quality {
+        background-color: #7e7d7d;
+        padding: 1rem 2rem;
+        margin: 0.5rem;
+        border-radius: 8px;
+        box-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>頂加影音團隊 Live</h1>
+      <p>CDN powered by KC</p>
+
+      <div v-if="isLiveNow">
+        <div class="qualities" v-if="!qualitySelected">
+          <div class="quality" @click="play('live_360p.m3u8')">360p</div>
+          <div class="quality" @click="play('live_720p.m3u8')">720p</div>
+          <div class="quality" @click="play('live_1080p.m3u8')">1080p</div>
+          <div class="quality" @click="play('live_source.m3u8')">Source</div>
+        </div>
+        <div class="player-container" v-if="qualitySelected">
+          <video-js id="live" class="vjs-default-skin player" controls>
+            <source :src="src" type="application/x-mpegURL" />
+          </video-js>
+        </div>
+      </div>
+      <div v-else>
+        <p>
+          哎呀，你太早來到這裡了，現在好像沒有直播耶。就讓我鎖鏈的山松當你的對手吧
+        </p>
+        <img
+          src="https://global.cdn.dcsx.edgeize.net/50c0269bf9b54308072213dec9a38c50/e8/e6/27/f9/c1/2f/7b/84/5a0d7a5423b048846d8efe6f627f56e2/57842f1e-03d5-4202-9a56-94b2a5ab02b8.webp"
+        />
+        <p>蝦密，你不喜歡哦? 那KC總可以了吧?</p>
+        <img
+          src="https://global.cdn.dcsx.edgeize.net/50c0269bf9b54308072213dec9a38c50/94/61/b2/8d/01/de/67/34/24c4e2f9c9c29674297dfeb1c9476866/bc6c94c3-5a52-4b19-bd83-dd083faea0e9.webp"
+        />
+      </div>
+    </div>
+    <p>Copyright © 2022 頂加影音團隊</p>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"
+      integrity="sha256-2ndwnHC+N2Yt4HwOAdoyAb6R6u9Ddt+R3TBGij6U35Q="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/video.js@7.18.1/dist/video.min.js"
+      integrity="sha256-q+7U8Y9IwjX/0V44ZFVdOhux1rAoIGgPiSueso0atQg="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@videojs/http-streaming@2.14.0/dist/videojs-http-streaming.min.js"
+      integrity="sha256-A83kteEYuomlPryp1fOEVntFc5YISOa8xrdXQvATbc4="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/axios@0.26.1/dist/axios.min.js"
+      integrity="sha256-iSkNRnKsHORmMCNgQIxzyW0QzHrWeko/lyVjyI78G2c="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      let BASE_URL = "https://source.live.furry.taipei/live/hls/";
+      Vue.createApp({
+        data() {
+          return {
+            isLiveNow: false,
+            qualitySelected: false,
+            player: null,
+            src: BASE_URL + "live_source.m3u8",
+          };
+        },
+        mounted() {
+          this.checkIsLiveNow();
+          setInterval(this.checkIsLiveNow, 10000);
+        },
+        methods: {
+          checkIsLiveNow() {
+            axios
+              .get(BASE_URL + "live.m3u8")
+              .then((res) => {
+                this.isLiveNow = true;
+              })
+              .catch((err) => {
+                if (this.isLiveNow) {
+                  this.stop();
+                }
+                this.isLiveNow = false;
+              });
+          },
+          play(src) {
+            this.qualitySelected = true;
+            this.src = BASE_URL + src;
+            this.$nextTick((_) => {
+              this.player = videojs("live");
+              this.player.play();
+            });
+          },
+          stop() {
+            this.player.stop();
+            this.player.destroy();
+            this.player = null;
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
